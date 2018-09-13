@@ -4,14 +4,13 @@
 
 const u08 ADC_Port[ADC_INPUTS] = { 7 };	// порты входов АЦП (движок потенциометра "Время" на ADC7)
 
-volatile u08 ADC_State = LapTime;		// состояние и вход АЦП
+volatile u08 ADC_State = LAP_TIME;	// состояние и вход АЦП; инициируем в состоянии LAP_TIME
 
 volatile u08 ADC_Value[ADC_INPUTS];	// массив, в который АЦП сбрасывает результат по каждому
-									// входу отдельно; у нас пока только один вход "Время"/LapTime;
-									// при инициализации LapTime ставится в максимум
+									// входу отдельно; у нас пока только один вход "Время"/LAP_TIME;
 
 static u16 K_ancillary[ADC_INPUTS];	// вспомогательный массив, хранящий "коэффициенты
-										// усреднения" для ADC_Average_Filter_...
+									// усреднения" для ADC_Average_Filter_...
 
 volatile u08 ADC_Latch = 0;		// защёлка обновления значений АЦП - разрешает
 								// перемены единожды после преобразования.
@@ -31,7 +30,7 @@ volatile u08 ADC_Latch = 0;		// защёлка обновления значен
 void ADC_Init() {
 	
 	SET_BIT(ADCSRA, ADEN);		//включаем АЦП
-	CLEAR_BIT(ADCSRA, ADSC);		//старт преобразования пока не включаем
+	CLEAR_BIT(ADCSRA, ADSC);	//старт преобразования пока не включаем
 	CLEAR_BIT(ADCSRA, ADATE);	//отключаем постоянное преобразование
 	SET_BIT(ADCSRA, ADIF);		//снимаем флаг прерывания
 	SET_BIT(ADCSRA, ADIE);		//разрешаем прерывания
@@ -41,7 +40,7 @@ void ADC_Init() {
 	CLEAR_BIT(ADCSRA, ADPS1);
 	SET_BIT(ADCSRA, ADPS0);
 
-	CLEAR_BIT(ADMUX, REFS1);		//Источник Опорного Напряжения выставляем как
+	CLEAR_BIT(ADMUX, REFS1);	//Источник Опорного Напряжения выставляем как
 	SET_BIT(ADMUX, REFS0);		//"AVcc с внешним конденсатором на ножке AREF"
 
 	SET_BIT(ADMUX, ADLAR);		//выравниваем результат преобразования по левому краю
@@ -74,7 +73,7 @@ void ADC_Init() {
 
 void ADC_Average_Filter_Init() {
 
-	K_ancillary[LapTime] = (u08)(u08MAX << ADC_K_EXPONENT);
+	K_ancillary[LAP_TIME] = (u08)(u08MAX << ADC_K_EXPONENT);
 
 }
 
@@ -94,7 +93,7 @@ void ADC_Average_Filter_Init() {
 
 void ADC_Average_Filter_Update(u08 ch) {
 
-//	K_ancillary[ch] += ADC_Value[ADC_STATE] - (K_ancillary[ch] >> ADC_K_EXPONENT);	// нечитабельно, лучше развернуть
+//	K_ancillary[ch] += ADC_Value[ADC_State] - (u08)(K_ancillary[ch] >> ADC_K_EXPONENT);	// нечитабельно, лучше развернуть
 
 	K_ancillary[ch] = K_ancillary[ch] + ADC_Value[ADC_State] - (u08)(K_ancillary[ch] >> ADC_K_EXPONENT);
 
@@ -132,11 +131,11 @@ u08 ADC_Average_Filter_Result(u08 ch) {
 
 void ADC_Controller() {
 
-// если прерывание АЦП только что случилось и ещё не обработано
+// если прерывание АЦП уже случилось и ещё не обработано
 	if (ADC_Latch) {
 
 		switch (ADC_State)	{
-			case LapTime: {
+			case LAP_TIME: {
 				// значение АЦП пропустить через фильтр для
 				// удаления "дрожания" движка потенциометра "Время"
 				ADC_Average_Filter_Update(ADC_State);
@@ -147,7 +146,7 @@ void ADC_Controller() {
 				break;
 			}
 			default:	{				// если мы как-то случайно тут оказались, то
-				ADC_State = LapTime;	// "ремонтируем" ADC_State
+				ADC_State = LAP_TIME;	// "ремонтируем" ADC_State
 				break;					// и выходим
 			}
 		}
@@ -163,13 +162,13 @@ void ADC_Controller() {
 		GTimer_Start(GTIMER_ADC,ADC_POLLING_PERIOD);	// рестартуем таймер АЦП
 
 		switch (ADC_State)	{
-			case LapTime:	{
+			case LAP_TIME:	{
 				ADC_SET_INPUT(ADC_Port[ADC_State]);	// подключаем вход АЦП к соответствующей ноге и
 				ADC_START();						// запускаем однократное преобразование АЦП
 				break;								// и выходим
 			}
 			default:		{						// если мы как-то случайно тут оказались,
-				ADC_State = LapTime;				// то быстренько "ремонтируем" ADC_State и 
+				ADC_State = LAP_TIME;				// то быстренько "ремонтируем" ADC_State и 
 				break;								// выходим
 			}
 		}

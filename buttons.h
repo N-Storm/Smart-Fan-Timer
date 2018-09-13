@@ -1,7 +1,7 @@
 //***************************************************************************
 //
-//  Author(s)...:	Pashgan (исходный код опроса кнопок) http://chipenable.ru/index.php/programming-avr/item/38-uchebnyy-kurs-opros-knopok.html
-//					Vlady (адаптация под проект)
+//  Author(s):	Pashgan (исходный код опроса кнопок) http://chipenable.ru/index.php/programming-avr/item/38-uchebnyy-kurs-opros-knopok.html
+//				Vlady (адаптация под проект)
 //
 //***************************************************************************
 
@@ -44,7 +44,7 @@
 
 void BUTTONS_Init();
 void BUTTONS_Debrief();
-u08 BUTTONS_GetKey();
-void BUTTONS_SetKey(u08 key);
+u08 BUTTONS_Get_Key();
+void BUTTONS_Set_Key(u08 key);
 
 #endif //BUTTONS_H_

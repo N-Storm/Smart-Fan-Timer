@@ -14,13 +14,13 @@ static u08 pressedKey = 0;
 *   Purpose :       инициализация кнопочных портов как входов
 ****************************************************************************/
 void BUTTONS_Init() {
-	CLEAR_BIT(BUTTONS_DDR,PIN_RUN);		// порты кнопок как входы
+	CLEAR_BIT(BUTTONS_DDR,PIN_RUN);			// порты кнопок как входы
 	CLEAR_BIT(BUTTONS_DDR,PIN_STOP);		// порты кнопок как входы
 	CLEAR_BIT(BUTTONS_DDR,PIN_SELECTOR);	// порты кнопок как входы
 	
-	SET_BIT(BUTTONS_PORT,PIN_RUN);		// ВКЛ внутреннюю подтяжку
-	SET_BIT(BUTTONS_PORT,PIN_STOP);		// ВКЛ внутреннюю подтяжку
-	SET_BIT(BUTTONS_PORT,PIN_SELECTOR);	// ВКЛ внутреннюю подтяжку
+	SET_BIT(BUTTONS_PORT,PIN_RUN);			// ВКЛ внутреннюю подтяжку
+	SET_BIT(BUTTONS_PORT,PIN_STOP);			// ВКЛ внутреннюю подтяжку
+	SET_BIT(BUTTONS_PORT,PIN_SELECTOR);		// ВКЛ внутреннюю подтяжку
 }
 
 
@@ -62,13 +62,13 @@ u08 key = 0;
 }
 
 /**************************************************************************
-*   Function name : BUTTONS_GetKey
+*   Function name : BUTTONS_Get_Key
 *   Returns :       номер нажатой кнопки
 *   Parameters :    нет
 *   Purpose :       возвращает содержимое кнопочного буфера
 *                   при этом буфер очищается
 ****************************************************************************/
-u08 BUTTONS_GetKey() {
+u08 BUTTONS_Get_Key() {
 		u08 key = pressedKey;
 		pressedKey = KEY_NULL;
 		return key;
@@ -76,13 +76,13 @@ u08 BUTTONS_GetKey() {
 
 
 /**************************************************************************
-*   Function name : BUTTONS_SetKey
+*   Function name : BUTTONS_Set_Key
 *   Returns :       нет
 *   Parameters :    номер кнопки
 *   Purpose :       записывает в кнопочный буфер значение
 *                   требуется иногда для имитации нажатия кнопок
 ****************************************************************************/
-void BUTTONS_SetKey(u08 key) {
+void BUTTONS_Set_Key(u08 key) {
 		pressedKey = key;
 }
 

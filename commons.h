@@ -10,14 +10,28 @@
 
 /******************************************************************************************
 * Битовые макросы */
+
 #define SET_BIT(reg, bit)		(reg |= (1<<bit))
 #define CLEAR_BIT(reg, bit)		(reg &= (~(1<<bit)))
 #define SWITCH_BIT(reg, bit)	(reg ^= (1<<bit))
 #define BIT_IS_SET(reg, bit)	((reg & (1<<bit)) != 0)
 #define BIT_IS_CLEAR(reg, bit)	((reg & (1<<bit)) == 0)
 
+#define HIBYTE(reg)		(*((uint8_t*)&(reg) + 1))
+#define LOBYTE(reg)		(*((uint8_t*)&(reg)))
+
+#define HIWORD(reg)		(*((uint16_t*)&(reg) + 1))
+#define LOWORD(reg)		(*((uint16_t*)&(reg)))
+
+#define BYTE0(reg)		(*((uint8_t*)&(reg) + 0))
+#define BYTE1(reg)		(*((uint8_t*)&(reg) + 1))
+#define BYTE2(reg)		(*((uint8_t*)&(reg) + 2))
+#define BYTE3(reg)		(*((uint8_t*)&(reg) + 3))
+
+
 /******************************************************************************************
 * Переопределения типов */
+
 typedef uint8_t		u08;
 typedef uint16_t	u16;
 typedef uint32_t	u32;
@@ -45,6 +59,16 @@ typedef int64_t		s64;
 #define s64MIN	INT64_MIN
 #define s64MAX	INT64_MAX
 
+
+/******************************************************************************************
+* Полезные функции */
+
+#define MIN(n,m)		(((n) < (m)) ? (n) : (m))
+#define MAX(n,m)		(((n) < (m)) ? (m) : (n))
+#define ABS(n)			(((n) >= 0) ? (n) : -(n))
+
+#define ARRAY_SIZE(a)	( sizeof(a)/sizeof(*(a)) )
+
 /******************************************************************************************
 * Макросы прерываний */
 
@@ -52,9 +76,9 @@ static volatile u08 SaveRegister;
 
 #define ENABLE_INTERRUPT()	sei()
 #define DISABLE_INTERRUPT()	do { SaveRegister = SREG; cli(); } while(0)
-#define RESTORE_INTERRUPT()	do { SREG = SaveRegister; sei(); } while(0)	//использовать
-																			//RESTORE только
-																			//после DISABLE
+#define RESTORE_INTERRUPT()	do { SREG = SaveRegister; sei(); } while(0)	// использовать
+																		// RESTORE только
+																		// после DISABLE
 
 #define WATCHDOG_RESET()	wdt_reset()		// пинок собаке
    
@@ -76,15 +100,15 @@ static volatile u08 SaveRegister;
 #define TRUE	1
 #define FALSE	0
 
-#define HIGH	1
-#define LOW		0
+#define HIGH	TRUE
+#define LOW		FALSE
 
-#define ON		1
-#define OFF		0
+#define ON		TRUE
+#define OFF		FALSE
 
-#define YES		1
-#define NO		0
+#define YES		TRUE
+#define NO		FALSE
 
 
-/*--------------------------------------------------------------------------*/
+/*****************************************************************************************/
 #endif /* COMMONS_H_ */

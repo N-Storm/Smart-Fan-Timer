@@ -34,17 +34,24 @@ static u08 state = 0;
 
 	switch(state) 	{
 	
-		case 0:
-			SYS_LED_ON();			// ВКЛючаем SysLED
+		case 0:	
+			SYS_LED_ON();			// включаем SysLED
 			GTimer_Start(GTIMER_SYS_LED,SYS_LED_DURATION_ON);	// запускаем таймер
 			state = 1;				// меняем состояние свича
-			return;
+			break;
 
 		case 1:
-			SYS_LED_OFF();			// ВЫКЛючаем SysLED
+			SYS_LED_OFF();			// вЫключаем SysLED
 			GTimer_Start(GTIMER_SYS_LED,SYS_LED_DURATION_OFF);	// запускаем таймер
 			state = 0;				// меняем состояние свича
-			return;
+			break;
+
+		default:	
+			SYS_LED_OFF();			// вЫключаем SysLED
+			GTimer_Stop(GTIMER_SYS_LED); // стопарим таймер 
+			state = 0;				// ремонтируем состояние свича
+			break;
+
 	}
 }
 

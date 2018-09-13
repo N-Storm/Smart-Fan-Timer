@@ -4,6 +4,9 @@
 #include "commons.h"
 
 
+#define SYS_TICK_PERIOD		10		// период системных часов, в миллисекундах
+
+
 /******************************************************************************************
  * Количество используемых таймеров (максимум 255) */
 
@@ -12,9 +15,6 @@
  
 /******************************************************************************************
  * Идентификаторы таймеров GTimerID */
-
-#define SYS_TICK_PERIOD         10                      // период системных часов, в миллисекундах
-
  // Идентификаторы должны идти без пропусков от 0 до 255
 #define GTIMER_SYS_LED	0	// системный светодиод
 #define GTIMER_BUTTONS	1	// период опроса кнопок
@@ -32,11 +32,11 @@ extern volatile u08 SysTick;
 
 void GTimer_Init();
 void SysTime_Handler();
-void GTimer_Start(u08 GTimerID,u64 delay); 
+void GTimer_Start(u08 GTimerID,u32 delay); 
 void GTimer_Stop(u08 GTimerID);
 u08 GTimer_Exp(u08 GTimerID);
 void GTimer_Pause(u08 GTimerID);
 void GTimer_Release(u08 GTimerID);
-u64 GTimer_Get_Remainder(u08 GTimerID);
+u32 GTimer_Get_Remainder(u08 GTimerID);
 
 #endif	// GTIMER_H_

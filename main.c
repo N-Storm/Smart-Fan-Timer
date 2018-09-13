@@ -86,7 +86,7 @@ Comments:
 // #include <util/atomic.h>
 
 #ifndef F_CPU
-#define F_CPU				8000000ul	// МК работает (с внутренней тактировкой) 8 МГц
+#define F_CPU	8000000ul	// МК работает с внутренней тактировкой 8 МГц
 #endif
 
 #include "commons.h"
@@ -172,7 +172,7 @@ int main (void) {
 
 	GTimer_Init();				// таймеры
 
-// разрешаем прерывания. "Поехали!" (c) Ю. А. Гагарин
+// Подготовка закончена. "Поехали!" (c) Ю. А. Гагарин
 
 	ENABLE_INTERRUPT();
 
@@ -190,6 +190,9 @@ int main (void) {
 		
 		ADC_Controller();					// запуск функции управления АЦПшкой
 
+		// все приготовления сделаны; теперь приступаем к выполнению полезной работы
+		EXECUTIVE();
+		
 		if (SysTick) SysTime_Handler();		// системные часы
 	}
 	return 0;

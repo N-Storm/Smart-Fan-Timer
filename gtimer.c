@@ -9,12 +9,12 @@
 
 volatile u08 SysTick = 0;		// Инициализация флага SysTick
 
-static volatile u64 SysTime;	// системное время
+static volatile u32 SysTime;	// системное время
 
 static volatile u08 GTStates[GTIMER_MAX_IDs];	// текущие состояния каждого таймера (все
 												// инициализируются как TIMER_STOPPED)
 
-static volatile u64 GTDelay[GTIMER_MAX_IDs];	// массив задержек для каждого таймера
+static volatile u32 GTDelay[GTIMER_MAX_IDs];	// массив задержек для каждого таймера
 												// GTDelay[GTimerID] = SysTime + delay;
 												// все инициализируются как "истёкшие"
 
@@ -30,10 +30,10 @@ static volatile u64 GTDelay[GTIMER_MAX_IDs];	// массив задержек д
 
 void GTimer_Init() {
 
-	SysTime = 0;						// обнуляем системное время
+	SysTime = 0;							// обнуляем системное время
 
 	for(u08 i=0; i<GTIMER_MAX_IDs; i++) {	// стартуем все (определённые в GTimerID)
-		GTimer_Start(i, 0);				// таймеры с временем 0 (ноль) систик
+		GTimer_Start(i, 0);					// таймеры с временем 0 (ноль) систик
 	}
 
 
@@ -57,7 +57,7 @@ void SysTime_Handler() {
 		
 	// если устройство не RUN (не в работе), а системное время SysTime превысило
 	// половину размера своей переменной,
-	if ((GTStates[GTIMER_RUN] == TIMER_STOPPED) && ((u64MAX/2) < SysTime)) {
+	if ((GTStates[GTIMER_RUN] == TIMER_STOPPED) && ((u32MAX/2) < SysTime)) {
 		DISABLE_INTERRUPT();
 		GTimer_Init();		// то обнуляем системное время и
 							// реинициализируем все рабочие таймеры
@@ -67,14 +67,14 @@ void SysTime_Handler() {
 
 
 //-----------------------------------------
-//	Function name :	GTimer_Start(u08 GTimerID,u64 delay)
+//	Function name :	GTimer_Start(u08 GTimerID,u32 delay)
 //	Returns :		нет
 //	Parameters :	u08 GTimerID - идентификатор таймера (определяется в maintimer.h)
-//					u64 delay - устанавливаемое время отсчёта таймера в миллисекундах
+//					u32 delay - устанавливаемое время отсчёта таймера в миллисекундах
 //	Purpose :		Запуск указанного таймера на указанную длительность
 //-----------------------------------------
 
-void GTimer_Start(u08 GTimerID,u64 delay) {
+void GTimer_Start(u08 GTimerID,u32 delay) {
 	GTStates[GTimerID] = TIMER_RUNNING;
 	DISABLE_INTERRUPT();
 		GTDelay[GTimerID] = (delay/SYS_TICK_PERIOD) + SysTime;
@@ -86,7 +86,8 @@ void GTimer_Start(u08 GTimerID,u64 delay) {
 //	Function name :	GTimer_Stop(u08 GTimerID)
 //	Returns :		нет
 //	Parameters :	u08 GTimerID - идентификатор таймера (определяется в maintimer.h)
-//	Purpose :		Принудительная остановка указанного таймера с обнулением длительности
+//	Purpose :		Принудительная остановка указанного таймера с обнулением длительности;
+//					По смыслу - принудительное "истечение времени" таймера
 //-----------------------------------------
 
 void GTimer_Stop(u08 GTimerID)	{				
@@ -154,6 +155,6 @@ void GTimer_Release(u08 GTimerID)  {
 //	Purpose :		Получение остатка времени таймера
 //-----------------------------------------
 
-u64 GTimer_Get_Remainder(u08 GTimerID)	{
+u32 GTimer_Get_Remainder(u08 GTimerID)	{
 	return (GTDelay[GTimerID] > SysTime ? (GTDelay[GTimerID] - SysTime) : 0);
 }
